@@ -44,7 +44,7 @@ func main() {
 					Flags: scrapeFlags,
 					Action: func(c *cli.Context) error {
 						if c.NArg() > 0 {
-							scrape(c.Args().First(), true)
+							scrape(c, c.Args().First(), true)
 						} else {
 							fmt.Println("No target URL given")
 						}
@@ -58,7 +58,7 @@ func main() {
 					Flags: scrapeFlags,
 					Action: func(c *cli.Context) error {
 						if c.NArg() > 0 {
-							scrape(c.Args().First(), false)
+							scrape(c, c.Args().First(), false)
 						} else {
 							fmt.Println("No target URL given")
 						}

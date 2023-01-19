@@ -8,11 +8,11 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Scrape everything",
 	},
 	cli.BoolFlag{
-		Name:  "email,e",
+		Name:  "emails,e",
 		Usage: "Scrape email addresses",
 	},
 	cli.BoolFlag{
-		Name:  "phone,p",
+		Name:  "phones,p",
 		Usage: "Scrape phone numbers",
 	},
 	cli.BoolFlag{
@@ -30,6 +30,10 @@ var scrapeFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "downloadpdfs,dp",
 		Usage: "Download pdfs",
+	},
+	cli.BoolFlag{
+		Name:  "files",
+		Usage: "Download all downloadable files",
 	},
 	cli.BoolFlag{
 		Name:  "logpdfs,lp",

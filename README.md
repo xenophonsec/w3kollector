@@ -107,20 +107,6 @@ Output structure:
 
 > **Note:** files and folders are only created if that data is found
 
-emailAddresses.txt and phoneNumbers.txt store the address and number along with the page it was found on:
-```
-dave@example.com : example.com/meettheteam
-carol@example.com : example.com/meettheteam
-team@example.com : example.com/contact
-contactus@example.com : example.com/contact
-```
-
-```
-243-989-3342 : example.com/meettheteam
-243-433-3643 : example.com/meettheteam
-243-119-9933 : example.com/contact
-```
-
 Resource links are stored with both the href and the rel attributes:
 ```
 preconnect: https://fonts.gstatic.com
