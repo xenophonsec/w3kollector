@@ -12,8 +12,35 @@ go install -v github.com/xenophonsec/w3kollector@latest
 
 ## Use
 
-![w3Kollector use](./_images/w3kollector_use.png)
+```
+          _____ __ __      ____          __
+ _      _|__  // //_/___  / / /__  _____/ /_____  _____
+| | /| / //_ </ ,< / __ \/ / / _ \/ ___/ __/ __ \/ ___/
+| |/ |/ /__/ / /| / /_/ / / /  __/ /__/ /_/ /_/ / /
+|__/|__/____/_/ |_\____/_/_/\___/\___/\__/\____/_/
+=================================================
 
+NAME:
+   w3kollector CLI - scrape and scan websites
+
+USAGE:
+   w3kollector [global options] command [command options] [arguments...]
+
+VERSION:
+   1.0.0
+
+AUTHOR:
+   Xenophonsec
+
+COMMANDS:
+   lookup, l  lookup domain name info, records and IP addresses
+   scrape, s  scrape html
+   help, h    Shows a list of commands or help for one command
+
+GLOBAL OPTIONS:
+   --help, -h     show help
+   --version, -v  print the version
+```
 
 ## Features
 
