@@ -63,12 +63,21 @@ w3kollector lookup microsoft.com
 
 The scraper crawls websites and gathers contact info, meta data and various files. It refrains from following links outside of the target domain (but it will scan subdomains).
 
+```
+w3kollector scrape --help
+```
 ![w3Kollector scrape help](./_images/w3kollector_scrape_help.png)
 
 You can scrape a whole website with `scrape crawl` or a single page with the `scrape page` command.
 
 ```
-w3kollector scrape crawl microsoft.com
+w3kollector scrape crawl --help
+```
+![w3Kollector scrape crawl help](./_images/w3kollector_scrape_crawl_help.png)
+
+
+```
+w3kollector scrape crawl --all microsoft.com
 ```
 ![w3Kollector scrape](./_images/w3kollector_scrape.png)
 
