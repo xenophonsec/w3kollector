@@ -30,18 +30,20 @@ The lookup command fetches
 ```
 w3kollector lookup microsoft.com
 ```
-![w3Kollector use](./_images/w3kollector_lookup.png)
+![w3Kollector lookup](./_images/w3kollector_lookup.png)
 
 ### Scrape
 
 The scraper crawls websites and gathers contact info, meta data and various files. It refrains from following links outside of the target domain (but it will scan subdomains).
+
+![w3Kollector scrape help](./_images/w3kollector_scrape_help.png)
 
 You can scrape a whole website with `scrape crawl` or a single page with the `scrape page` command.
 
 ```
 w3kollector scrape crawl microsoft.com
 ```
-![w3Kollector use](./_images/w3kollector_scrape.png)
+![w3Kollector scrape](./_images/w3kollector_scrape.png)
 
 It collects
 - Email Addresses
