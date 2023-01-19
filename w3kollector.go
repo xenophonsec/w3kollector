@@ -372,14 +372,3 @@ func lookupMX(domain string) {
 		fmt.Println("MX Record:", mx.Host)
 	}
 }
-
-func showBanner() {
-	fmt.Println()
-	fmt.Println("          _____ __ __      ____          __            ")
-	fmt.Println(" _      _|__  // //_/___  / / /__  _____/ /_____  _____")
-	fmt.Println("| | /| / //_ </ ,< / __ \\/ / / _ \\/ ___/ __/ __ \\/ ___/")
-	fmt.Println("| |/ |/ /__/ / /| / /_/ / / /  __/ /__/ /_/ /_/ / /    ")
-	fmt.Println("|__/|__/____/_/ |_\\____/_/_/\\___/\\___/\\__/\\____/_/     ")
-	fmt.Println("=================================================")
-	fmt.Println()
-}
