@@ -15,6 +15,7 @@ import (
 )
 
 var outputDir string
+var recursive string
 
 func main() {
 	var app = cli.NewApp()
@@ -26,19 +27,6 @@ func main() {
 
 	app.Commands = []cli.Command{
 		{
-			Name:    "scrape",
-			Aliases: []string{"s"},
-			Usage:   "crawl and scrape a website",
-			Action: func(c *cli.Context) error {
-				if c.NArg() > 0 {
-					scrapeSite(c.Args().First())
-				} else {
-					fmt.Println("No target URL given")
-				}
-				return nil
-			},
-		},
-		{
 			Name:    "lookup",
 			Aliases: []string{"l"},
 			Usage:   "lookup domain name info, records and IP addresses",
@@ -49,6 +37,38 @@ func main() {
 					fmt.Println("No target domain given")
 				}
 				return nil
+			},
+		},
+		{
+			Name:    "scrape",
+			Aliases: []string{"s"},
+			Usage:   "scrape html",
+			Subcommands: []cli.Command{
+				{
+					Name:  "crawl",
+					Usage: "crawl the website",
+					Action: func(c *cli.Context) error {
+						if c.NArg() > 0 {
+							scrapeSite(c.Args().First(), true)
+						} else {
+							fmt.Println("No target URL given")
+						}
+						fmt.Println("new task template: ", c.Args().First())
+						return nil
+					},
+				},
+				{
+					Name:  "page",
+					Usage: "scrape a specific page",
+					Action: func(c *cli.Context) error {
+						if c.NArg() > 0 {
+							scrapeSite(c.Args().First(), false)
+						} else {
+							fmt.Println("No target URL given")
+						}
+						return nil
+					},
+				},
 			},
 		},
 	}
@@ -76,7 +96,7 @@ func lookupDomain(domain string) {
 }
 
 // Crawl and scrape website for email addresses, phone numbers, external links, and download pdfs and other interesting files
-func scrapeSite(targetURL string) {
+func scrapeSite(targetURL string, crawl bool) {
 	c := colly.NewCollector(
 		colly.IgnoreRobotsTxt(),
 	)
@@ -85,6 +105,10 @@ func scrapeSite(targetURL string) {
 	var phoneNumbers []string
 	var pages []string
 	var externalLinks []string
+	var scripts []string
+	var stylesheets []string
+	var links []string
+	var metaData []string
 
 	if !strings.HasPrefix(targetURL, "http") {
 		targetURL = "https://" + targetURL
@@ -135,12 +159,62 @@ func scrapeSite(targetURL string) {
 					saveLineToFile("pdfs.txt", url)
 				}
 			}
-			e.Request.Visit(url)
+			// only visit url if crawl is set to true or it is a pdf
+			if crawl || strings.HasSuffix(url, ".pdf") {
+				e.Request.Visit(url)
+			}
 		} else {
 			if !strings.HasPrefix(url, "#") && !arrayContains(externalLinks, url) && !strings.HasPrefix(url, "javascript:") {
 				externalLinks = append(externalLinks, url)
 				fmt.Println("Outbound: ", url)
 				saveLineToFile("outbound.txt", url)
+			}
+		}
+	})
+
+	c.OnHTML("script", func(e *colly.HTMLElement) {
+		url := e.Attr("src")
+		if len(url) > 1 && !arrayContains(scripts, url) {
+			scripts = append(scripts, url)
+			fmt.Println("Script: ", url)
+			saveLineToFile("scripts.txt", url)
+		}
+	})
+
+	c.OnHTML("link", func(e *colly.HTMLElement) {
+		url := e.Attr("href")
+		rel := e.Attr("rel")
+		if rel == "stylesheet" {
+			if !arrayContains(stylesheets, url) {
+				stylesheets = append(stylesheets, url)
+				fmt.Println("Stylesheet: ", url)
+				saveLineToFile("stylesheets.txt", url)
+			}
+		} else if !arrayContains(links, url) {
+			links = append(links, url)
+			fmt.Println("Resource Link: ", rel+": "+url)
+			saveLineToFile("resourceLinks.txt", rel+": "+url)
+		}
+	})
+
+	c.OnHTML("meta", func(e *colly.HTMLElement) {
+		name := e.Attr("name")
+		property := e.Attr("property")
+		content := e.Attr("content")
+		value := e.Attr("value")
+		meta := name + property
+		if len(content) <= 0 {
+			meta += " : " + value
+		} else {
+			meta += " : " + content
+		}
+		// make sure that something we care about is set
+		if len(name+property+content+value) != 0 {
+			// make sure we haven't already recorded this
+			if !arrayContains(metaData, meta) {
+				metaData = append(metaData, meta)
+				fmt.Println("Meta Tag: ", meta)
+				saveLineToFile("metaTags.txt", meta)
 			}
 		}
 	})
