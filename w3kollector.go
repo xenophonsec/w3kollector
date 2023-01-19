@@ -164,6 +164,14 @@ func scrapeSite(targetURL string, crawl bool) {
 				e.Request.Visit(url)
 			}
 		} else {
+			if strings.HasPrefix(url, "tel:") {
+				phonenumber := strings.TrimPrefix(url, "tel:")
+				if !arrayContains(phoneNumbers, phonenumber) {
+					phoneNumbers = append(phoneNumbers, phonenumber)
+					fmt.Println("Phone Number: ", phonenumber)
+					saveLineToFile("phoneNumbers.txt", phonenumber)
+				}
+			}
 			if !strings.HasPrefix(url, "#") && !arrayContains(externalLinks, url) && !strings.HasPrefix(url, "javascript:") {
 				externalLinks = append(externalLinks, url)
 				fmt.Println("Outbound: ", url)
@@ -271,6 +279,15 @@ func scrapeSite(targetURL string, crawl bool) {
 			content := string(r.Body)
 			reg := regexp.MustCompile(`[0-9]{3}-[0-9]{3}-[0-9]{4}`)
 			matches := reg.FindAllString(content, -1)
+			for _, phonenumber := range matches {
+				if !arrayContains(phoneNumbers, phonenumber) {
+					phoneNumbers = append(phoneNumbers, phonenumber)
+					fmt.Println("Phone Number: ", phonenumber)
+					saveLineToFile("phoneNumbers.txt", phonenumber+" : "+url)
+				}
+			}
+			reg = regexp.MustCompile(`\([0-9]{3}\) [0-9]{3}-[0-9]{4}`)
+			matches = reg.FindAllString(content, -1)
 			for _, phonenumber := range matches {
 				if !arrayContains(phoneNumbers, phonenumber) {
 					phoneNumbers = append(phoneNumbers, phonenumber)
