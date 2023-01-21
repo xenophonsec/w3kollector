@@ -14,7 +14,7 @@ var recursive string
 func main() {
 	var app = cli.NewApp()
 	// set info
-	app.Name = "w3kollector CLI"
+	app.Name = "w3kollector"
 	app.Usage = "scrape and scan websites"
 	app.Author = "Xenophonsec"
 	app.Version = "1.0.0"
