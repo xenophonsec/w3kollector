@@ -202,15 +202,22 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 					}
 				}
 			}
+			// if it is an HTML page
 		} else {
+			content := string(r.Body)
 			// save page to sitemap
 			if !arrayContains(pages, page) {
 				pages = append(pages, page)
 				saveLineToFile("sitemap.txt", page)
 			}
+			if cl.String("search") != "" {
+				if strings.Contains(content, cl.String("search")) {
+					fmt.Println("Search Critera Found: ", url)
+					saveLineToFile("search.txt", cl.String("search")+" : "+url)
+				}
+			}
 			// scrape phone numbers
 			if cl.Bool("phone") || cl.Bool("all") {
-				content := string(r.Body)
 				reg := regexp.MustCompile(`[0-9]{3}-[0-9]{3}-[0-9]{4}`)
 				matches := reg.FindAllString(content, -1)
 				for _, phonenumber := range matches {
