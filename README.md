@@ -21,7 +21,7 @@ go install -v github.com/xenophonsec/w3kollector@latest
 =================================================
 
 NAME:
-   w3kollector CLI - scrape and scan websites
+   w3kollector - scrape and scan websites
 
 USAGE:
    w3kollector [global options] command [command options] [arguments...]
@@ -76,10 +76,10 @@ w3kollector scrape --help
 =================================================
 
 NAME:
-   w3kollector CLI scrape - scrape html
+   w3kollector scrape - scrape html
 
 USAGE:
-   w3kollector CLI scrape [global options] command [command options] [arguments...]
+   w3kollector scrape [global options] command [command options] [arguments...]
 
 VERSION:
    1.0.0
@@ -106,10 +106,10 @@ w3kollector scrape crawl --help
 =================================================
 
 NAME:
-   w3kollector CLI scrape crawl - crawl the website
+   w3kollector scrape crawl - crawl the website
 
 USAGE:
-   w3kollector CLI scrape crawl [command options] [arguments...]
+   w3kollector scrape crawl [command options] [arguments...]
 
 OPTIONS:
    --all, -a                     Scrape everything
@@ -122,7 +122,7 @@ OPTIONS:
    --files                       Download all downloadable files
    --logpdfs, --lp               Log pdf urls
    --meta, -m                    Scrape meta tags
-   --search value, --srch value  Search html pages. This can be plain text or html you are looking for.
+   --search value, --find value  Search html pages. This can be plain text or html you are looking for.
 
 ```
 
@@ -146,6 +146,7 @@ It collects
 It also
 - builds a sitemap of pages visited
 - logs http responses
+- supports raw html text search
 
 w3Kollector will write files to whatever directory you are currently in.
 
@@ -164,6 +165,7 @@ Output structure:
   - stylesheets.txt
   - resourceLinks.txt
   - metaTags.txt
+  - search.txt
 
 > **Note:** files and folders are only created if that data is found
 
@@ -180,5 +182,5 @@ alternate: https://example.com/rss/
 If you provide a domain name and not a full url it will auto prefix https://
 If you want to specify http you can do so likewise:
 ```
-w3kollector scrape http://website.com
+w3kollector scrape crawl --all http://website.com
 ```
