@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/gocolly/colly"
 	"github.com/urfave/cli"
 )
@@ -57,7 +58,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				emailAddress = strings.Trim(emailAddress, " ")
 				if !arrayContains(emailAddresses, emailAddress) {
 					emailAddresses = append(emailAddresses, emailAddress)
-					fmt.Println("Email Address: ", emailAddress)
+					color.Cyan("Email Address: " + emailAddress)
 					saveLineToFile("emailAddresses.txt", emailAddress)
 				}
 			}
@@ -75,7 +76,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 					phonenumber := strings.TrimPrefix(url, "tel:")
 					if !arrayContains(phoneNumbers, phonenumber) {
 						phoneNumbers = append(phoneNumbers, phonenumber)
-						fmt.Println("Phone Number: ", phonenumber)
+						color.Magenta("Phone Number: " + phonenumber)
 						saveLineToFile("phoneNumbers.txt", phonenumber)
 					}
 				}
@@ -84,7 +85,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				if strings.HasSuffix(url, ".pdf") {
 					if !arrayContains(pdfs, url) {
 						pdfs = append(pdfs, url)
-						fmt.Println("PDF: ", url)
+						color.Blue("PDF: " + url)
 						saveLineToFile("pdfs.txt", url)
 					}
 				}
@@ -97,7 +98,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 
 			if !strings.HasPrefix(url, "#") && !arrayContains(externalLinks, url) && !strings.HasPrefix(url, "javascript:") {
 				externalLinks = append(externalLinks, url)
-				fmt.Println("Outbound: ", url)
+				color.Red("Outbound: " + url)
 				saveLineToFile("outbound.txt", url)
 			}
 		}
@@ -149,7 +150,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				// make sure we haven't already recorded this
 				if !arrayContains(metaData, meta) {
 					metaData = append(metaData, meta)
-					fmt.Println("Meta Tag: ", meta)
+					color.Yellow("Meta Tag: " + meta)
 					saveLineToFile("metaTags.txt", meta)
 				}
 			}
@@ -169,8 +170,8 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 		responseLine := strconv.Itoa(r.StatusCode) + " " + r.Headers.Get("Content-Type") + " " + url
 		saveLineToFile("responses.txt", responseLine)
 		// download pdfs
-		if cl.Bool("downloadpdfs") || cl.Bool("all") {
-			if strings.HasSuffix(page, ".pdf") {
+		if strings.HasSuffix(page, ".pdf") {
+			if cl.Bool("downloadpdfs") || cl.Bool("all") {
 				pdfsDir := filepath.Join(outputDir, "pdfs")
 				_, err := os.Stat(pdfsDir)
 				if os.IsNotExist(err) {
@@ -210,9 +211,10 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				pages = append(pages, page)
 				saveLineToFile("sitemap.txt", page)
 			}
-			if cl.String("search") != "" {
-				if strings.Contains(content, cl.String("search")) {
-					fmt.Println("Search Critera Found: ", url)
+			search := cl.String("search")
+			if search != "" {
+				if strings.Contains(content, search) {
+					color.Green(search + " Found: " + url)
 					saveLineToFile("search.txt", cl.String("search")+" : "+url)
 				}
 			}
@@ -223,7 +225,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				for _, phonenumber := range matches {
 					if !arrayContains(phoneNumbers, phonenumber) {
 						phoneNumbers = append(phoneNumbers, phonenumber)
-						fmt.Println("Phone Number: ", phonenumber)
+						color.Magenta("Phone Number: " + phonenumber)
 						saveLineToFile("phoneNumbers.txt", phonenumber)
 					}
 				}
@@ -232,7 +234,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				for _, phonenumber := range matches {
 					if !arrayContains(phoneNumbers, phonenumber) {
 						phoneNumbers = append(phoneNumbers, phonenumber)
-						fmt.Println("Phone Number: ", phonenumber)
+						color.Magenta("Phone Number: " + phonenumber)
 						saveLineToFile("phoneNumbers.txt", phonenumber)
 					}
 				}
