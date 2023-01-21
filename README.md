@@ -66,14 +66,65 @@ The scraper crawls websites and gathers contact info, meta data and various file
 ```
 w3kollector scrape --help
 ```
-![w3Kollector scrape help](./_images/w3kollector_scrape_help.png)
+
+```
+          _____ __ __      ____          __
+ _      _|__  // //_/___  / / /__  _____/ /_____  _____
+| | /| / //_ </ ,< / __ \/ / / _ \/ ___/ __/ __ \/ ___/
+| |/ |/ /__/ / /| / /_/ / / /  __/ /__/ /_/ /_/ / /
+|__/|__/____/_/ |_\____/_/_/\___/\___/\__/\____/_/
+=================================================
+
+NAME:
+   w3kollector CLI scrape - scrape html
+
+USAGE:
+   w3kollector CLI scrape [global options] command [command options] [arguments...]
+
+VERSION:
+   1.0.0
+
+COMMANDS:
+   crawl  crawl the website
+   page   scrape a specific page
+
+GLOBAL OPTIONS:
+   --help, -h  show help
+```
 
 You can scrape a whole website with `scrape crawl` or a single page with the `scrape page` command.
 
 ```
 w3kollector scrape crawl --help
 ```
-![w3Kollector scrape crawl help](./_images/w3kollector_scrape_crawl_help.png)
+```
+          _____ __ __      ____          __
+ _      _|__  // //_/___  / / /__  _____/ /_____  _____
+| | /| / //_ </ ,< / __ \/ / / _ \/ ___/ __/ __ \/ ___/
+| |/ |/ /__/ / /| / /_/ / / /  __/ /__/ /_/ /_/ / /
+|__/|__/____/_/ |_\____/_/_/\___/\___/\__/\____/_/
+=================================================
+
+NAME:
+   w3kollector CLI scrape crawl - crawl the website
+
+USAGE:
+   w3kollector CLI scrape crawl [command options] [arguments...]
+
+OPTIONS:
+   --all, -a                     Scrape everything
+   --emails, -e                  Scrape email addresses
+   --phones, -p                  Scrape phone numbers
+   --scripts, -s                 Scrape scripts
+   --stylesheets, --ss           Scrape stylesheets
+   --resourcelinks, --rl         Scrape resource links
+   --downloadpdfs, --dp          Download pdfs
+   --files                       Download all downloadable files
+   --logpdfs, --lp               Log pdf urls
+   --meta, -m                    Scrape meta tags
+   --search value, --srch value  Search html pages. This can be plain text or html you are looking for.
+
+```
 
 
 ```
