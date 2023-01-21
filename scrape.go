@@ -36,17 +36,10 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	targetDomain := strings.Replace(targetURL, "https://", "", -1)
 	targetDomain = strings.Replace(targetDomain, "http://", "", -1)
 
-	var err error
-	outputDir, err = os.Getwd()
-	if err != nil {
-		panic(err)
+	if len(cl.String("out")) == 0 {
+		fmt.Println("out not set")
 	}
-	outputDir = filepath.Join(outputDir, targetDomain)
-	_, err = os.Stat(outputDir)
-	if os.IsNotExist(err) {
-		os.Mkdir(outputDir, os.FileMode(0644))
-	}
-
+	handleOutputPath(cl.String("out"), targetDomain)
 	// for every link
 	collector.OnHTML("a", func(e *colly.HTMLElement) {
 		url := e.Attr("href")

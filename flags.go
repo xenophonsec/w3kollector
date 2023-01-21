@@ -47,4 +47,9 @@ var scrapeFlags = []cli.Flag{
 		Name:  "search,find",
 		Usage: "Search html pages. This can be plain text or html you are looking for.",
 	},
+	cli.StringFlag{
+		Name:  "out,o",
+		Value: "",
+		Usage: "What directory to place the output in. Default is current working directory.",
+	},
 }

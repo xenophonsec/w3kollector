@@ -5,6 +5,8 @@ import (
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/fatih/color"
 )
 
 func saveLineToFile(filename string, content string) {
@@ -30,4 +32,31 @@ func arrayContains(s []string, str string) bool {
 		}
 	}
 	return false
+}
+
+func handleOutputPath(outputFlag string, targetDomain string) {
+	if outputFlag == "" {
+		var err error
+		outputDir, err = os.Getwd()
+		if err != nil {
+			panic(err)
+		}
+		outputDir = filepath.Join(outputDir, targetDomain)
+		_, err = os.Stat(outputDir)
+		if os.IsNotExist(err) {
+			color.Red(outputDir + " does not exist")
+			os.Mkdir(outputDir, os.FileMode(0644))
+		} else if err != nil {
+			panic(err)
+		}
+	} else {
+		outputDir = outputFlag
+		_, err := os.Stat(outputDir)
+		if os.IsNotExist(err) {
+			color.Red(outputDir + " does not exist")
+			os.Exit(1)
+		} else if err != nil {
+			panic(err)
+		}
+	}
 }

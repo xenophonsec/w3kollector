@@ -123,7 +123,7 @@ OPTIONS:
    --logpdfs, --lp               Log pdf urls
    --meta, -m                    Scrape meta tags
    --search value, --find value  Search html pages. This can be plain text or html you are looking for.
-
+   --out value, -o value         What directory to place the output in. Default is current working directory.
 ```
 
 
