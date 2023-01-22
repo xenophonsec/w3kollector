@@ -1,6 +1,8 @@
 package main
 
-import "github.com/urfave/cli"
+import (
+	"github.com/urfave/cli"
+)
 
 var scrapeFlags = []cli.Flag{
 	cli.BoolFlag{
@@ -45,11 +47,24 @@ var scrapeFlags = []cli.Flag{
 	},
 	cli.StringFlag{
 		Name:  "search,find",
-		Usage: "Search html pages. This can be plain text or html you are looking for.",
+		Usage: "Search html pages. This can be plain text or html you are looking for",
 	},
 	cli.StringFlag{
 		Name:  "out,o",
 		Value: "",
-		Usage: "What directory to place the output in. Default is current working directory.",
+		Usage: "What directory to place the output in. Default is current working directory",
+	},
+}
+
+var searchFlags = []cli.Flag{
+	cli.StringFlag{
+		Name:  "text,t",
+		Value: "",
+		Usage: "text to search website for",
+	},
+	cli.StringFlag{
+		Name:  "keywords,k",
+		Value: "",
+		Usage: "keywords seperated by commas",
 	},
 }

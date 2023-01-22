@@ -28,17 +28,10 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	var links []string
 	var metaData []string
 
-	if !strings.HasPrefix(targetURL, "http") {
-		targetURL = "https://" + targetURL
-	}
+	targetURL = handleTargetURL(targetURL)
 
-	// set and clean target domain
-	targetDomain := strings.Replace(targetURL, "https://", "", -1)
-	targetDomain = strings.Replace(targetDomain, "http://", "", -1)
+	targetDomain := urlToDomain(targetURL)
 
-	if len(cl.String("out")) == 0 {
-		fmt.Println("out not set")
-	}
 	handleOutputPath(cl.String("out"), targetDomain)
 	// for every link
 	collector.OnHTML("a", func(e *colly.HTMLElement) {
@@ -164,35 +157,39 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 		saveLineToFile("responses.txt", responseLine)
 		// download pdfs
 		if strings.HasSuffix(page, ".pdf") {
-			if cl.Bool("downloadpdfs") || cl.Bool("all") {
-				pdfsDir := filepath.Join(outputDir, "pdfs")
-				_, err := os.Stat(pdfsDir)
-				if os.IsNotExist(err) {
-					os.Mkdir(pdfsDir, os.FileMode(0644))
-				}
-				pdfFilePath := filepath.Join(pdfsDir, r.FileName())
-				_, err = os.Stat(pdfFilePath)
-				if os.IsNotExist(err) {
-					err = r.Save(pdfFilePath)
-					if err != nil {
-						panic(err)
+			if !dontsave {
+				if cl.Bool("downloadpdfs") || cl.Bool("all") {
+					pdfsDir := filepath.Join(outputDir, "pdfs")
+					_, err := os.Stat(pdfsDir)
+					if os.IsNotExist(err) {
+						os.Mkdir(pdfsDir, os.FileMode(0644))
+					}
+					pdfFilePath := filepath.Join(pdfsDir, r.FileName())
+					_, err = os.Stat(pdfFilePath)
+					if os.IsNotExist(err) {
+						err = r.Save(pdfFilePath)
+						if err != nil {
+							panic(err)
+						}
 					}
 				}
 			}
 			// download files that aren't html pages
 		} else if !strings.Contains(r.Headers.Get("Content-Type"), "html") {
-			if cl.Bool("downloadpdfs") || cl.Bool("all") {
-				filesDir := filepath.Join(outputDir, "files")
-				_, err := os.Stat(filesDir)
-				if os.IsNotExist(err) {
-					os.Mkdir(filesDir, os.FileMode(0644))
-				}
-				filePath := filepath.Join(filesDir, r.FileName())
-				_, err = os.Stat(filePath)
-				if os.IsNotExist(err) {
-					err = r.Save(filePath)
-					if err != nil {
-						panic(err)
+			if !dontsave {
+				if cl.Bool("downloadpdfs") || cl.Bool("all") {
+					filesDir := filepath.Join(outputDir, "files")
+					_, err := os.Stat(filesDir)
+					if os.IsNotExist(err) {
+						os.Mkdir(filesDir, os.FileMode(0644))
+					}
+					filePath := filepath.Join(filesDir, r.FileName())
+					_, err = os.Stat(filePath)
+					if os.IsNotExist(err) {
+						err = r.Save(filePath)
+						if err != nil {
+							panic(err)
+						}
 					}
 				}
 			}
@@ -206,8 +203,9 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 			}
 			search := cl.String("search")
 			if search != "" {
-				if strings.Contains(content, search) {
-					color.Green(search + " Found: " + url)
+				occurences := strings.Count(content, search)
+				if occurences >= 1 {
+					color.Green(search + " found " + string(occurences) + " times at: " + url)
 					saveLineToFile("search.txt", cl.String("search")+" : "+url)
 				}
 			}

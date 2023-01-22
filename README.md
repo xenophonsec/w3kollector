@@ -3,6 +3,7 @@
 A greedy website scanner, scraper, and crawler.
 
 Get everything from email addresses and phone numbers to PDFs and DNS records.
+Search websites for keywords and phrases.
 
 ## Install
 
@@ -24,7 +25,7 @@ NAME:
    w3kollector - scrape and scan websites
 
 USAGE:
-   w3kollector [global options] command [command options] [arguments...]
+   w3kollector.exe [global options] command [command options] [arguments...]
 
 VERSION:
    1.0.0
@@ -35,11 +36,13 @@ AUTHOR:
 COMMANDS:
    lookup, l  lookup domain name info, records and IP addresses
    scrape, s  scrape html
+   search, q  Search website for specific text or html
    help, h    Shows a list of commands or help for one command
 
 GLOBAL OPTIONS:
-   --help, -h     show help
-   --version, -v  print the version
+   --dontsave, --ds  Do not save results to files
+   --help, -h        show help
+   --version, -v     print the version
 ```
 
 ## Features
@@ -85,17 +88,17 @@ VERSION:
    1.0.0
 
 COMMANDS:
-   crawl  crawl the website
+   site   site the website
    page   scrape a specific page
 
 GLOBAL OPTIONS:
    --help, -h  show help
 ```
 
-You can scrape a whole website with `scrape crawl` or a single page with the `scrape page` command.
+You can scrape a whole website with `scrape site` or a single page with the `scrape page` command.
 
 ```
-w3kollector scrape crawl --help
+w3kollector scrape site --help
 ```
 ```
           _____ __ __      ____          __
@@ -106,10 +109,10 @@ w3kollector scrape crawl --help
 =================================================
 
 NAME:
-   w3kollector scrape crawl - crawl the website
+   w3kollector scrape site - site the website
 
 USAGE:
-   w3kollector scrape crawl [command options] [arguments...]
+   w3kollector scrape site [command options] [arguments...]
 
 OPTIONS:
    --all, -a                     Scrape everything
@@ -128,7 +131,7 @@ OPTIONS:
 
 
 ```
-w3kollector scrape crawl --all microsoft.com
+w3kollector scrape site --all microsoft.com
 ```
 ![w3Kollector scrape](./_images/w3kollector_scrape.png)
 
@@ -182,5 +185,19 @@ alternate: https://example.com/rss/
 If you provide a domain name and not a full url it will auto prefix https://
 If you want to specify http you can do so likewise:
 ```
-w3kollector scrape crawl --all http://website.com
+w3kollector scrape site --all http://website.com
 ```
+
+## Search
+
+### Search text
+```
+w3kollector search site --text="login" microsoft.com
+```
+
+
+### Search multiple keywords
+```
+w3kollector search site --keywords="login,signin,logout,signout" microsoft.com
+```
+
