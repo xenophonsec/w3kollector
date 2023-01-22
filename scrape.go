@@ -205,8 +205,9 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 			if search != "" {
 				occurences := strings.Count(content, search)
 				if occurences >= 1 {
-					color.Green(search + " found " + string(occurences) + " times at: " + url)
-					saveLineToFile("search.txt", cl.String("search")+" : "+url)
+					output := search + " found " + strconv.Itoa(occurences) + " times at: " + url
+					color.Green(output)
+					saveLineToFile("search.txt", output)
 				}
 			}
 			// scrape phone numbers

@@ -19,6 +19,7 @@ func searchSite(cl *cli.Context, targetURL string, crawl bool) {
 	targetURL = handleTargetURL(targetURL)
 	targetDomain := urlToDomain(targetURL)
 
+	handleOutputPath(cl.String("out"), targetDomain)
 	// crawl website
 	if crawl {
 		collector.OnHTML("a", func(e *colly.HTMLElement) {

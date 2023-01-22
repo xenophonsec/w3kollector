@@ -46,7 +46,7 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Scrape meta tags",
 	},
 	cli.StringFlag{
-		Name:  "search,find",
+		Name:  "search,find,lookfor",
 		Usage: "Search html pages. This can be plain text or html you are looking for",
 	},
 	cli.StringFlag{
