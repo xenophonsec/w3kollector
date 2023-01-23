@@ -28,6 +28,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	var links []string
 	var metaData []string
 	var serverEngines []string
+	var addresses []string
 
 	targetURL = handleTargetURL(targetURL)
 	targetDomain := urlToDomain(targetURL)
@@ -215,6 +216,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				pages = append(pages, page)
 				saveLineToFile("sitemap.txt", page)
 			}
+			// handle search
 			search := cl.String("search")
 			if search != "" {
 				occurences := strings.Count(content, search)
@@ -224,8 +226,24 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 					saveLineToFile("search.txt", output)
 				}
 			}
+			// scrape addresses
+			if cl.Bool("addresses") || cl.Bool("all") {
+				tags := regexp.MustCompile(`<[^>]*>`)
+				contentStripped := tags.ReplaceAllString(content, " ")
+				// I want multiple more specific matching patterns because addresses can be so vague you can easily grab something that isn't one
+				// match P.O. Box addresses
+				// P.O. Box 3000 Cityname, CA 12345
+				findAddresses(contentStripped, `(P\.O\.\sBox\s)\d+\s[\w+\s]+[,]?\s\w+\s\w+`, &addresses)
+				// standard US home address
+				// 889 easy street rd, happyville Virginia 22642
+				findAddresses(contentStripped, `\d+\s+[\w+\s]+\s[crdstav]{2}[,]?\s\w+\s\w+\s\d{3,5}`, &addresses)
+				// suites and apt
+				//260 Deanna Views, Suite 480, Robynberg, Montana, 56479
+				//260 Deanna Views, Apt. 480, Robynberg, Montana, 56479
+				findAddresses(contentStripped, `\d+\s+[\w+\s]+[,]?\s+(Apt\.|Suite)\s\d+[,]?\s+\w+[,]?\s+\w+[,]?\s+\d+`, &addresses)
+			}
 			// scrape phone numbers
-			if cl.Bool("phone") || cl.Bool("all") {
+			if cl.Bool("phones") || cl.Bool("all") {
 				reg := regexp.MustCompile(`[0-9]{3}-[0-9]{3}-[0-9]{4}`)
 				matches := reg.FindAllString(content, -1)
 				for _, phonenumber := range matches {
@@ -249,4 +267,19 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	})
 
 	collector.Visit(targetURL)
+}
+
+func findAddresses(text string, regex string, addresses *[]string) {
+	reg := regexp.MustCompile(regex)
+	matches := reg.FindAllString(text, -1)
+	for _, address := range matches {
+		// clean address whitespace
+		spaces := regexp.MustCompile(`\s+`)
+		address = spaces.ReplaceAllString(address, " ")
+		if !arrayContains(*addresses, address) {
+			*addresses = append(*addresses, address)
+			color.Cyan("Address: " + address)
+			saveLineToFile("addresses.txt", address)
+		}
+	}
 }

@@ -18,6 +18,10 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Scrape phone numbers",
 	},
 	cli.BoolFlag{
+		Name:  "addresses,ad",
+		Usage: "Scrape addresses",
+	},
+	cli.BoolFlag{
 		Name:  "scripts,s",
 		Usage: "Scrape scripts",
 	},
@@ -34,7 +38,7 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Download pdfs",
 	},
 	cli.BoolFlag{
-		Name:  "files",
+		Name:  "files,f",
 		Usage: "Download all downloadable files",
 	},
 	cli.BoolFlag{
