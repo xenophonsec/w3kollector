@@ -1,10 +1,12 @@
 package main
 
 import (
+	"crypto/tls"
 	"fmt"
 	"log"
 	"net"
 	"net/http"
+	"strconv"
 	"strings"
 )
 
@@ -12,6 +14,8 @@ func lookupDomain(domain string) {
 	fmt.Println()
 	lookupCNAME(domain)
 	lookupHTTP(domain)
+	fmt.Println()
+	lookupTLS(domain)
 	fmt.Println()
 	getIPs(domain)
 	fmt.Println()
@@ -89,5 +93,36 @@ func lookupHTTP(domain string) {
 				fmt.Println(key+": ", res.Header.Get(key))
 			}
 		}
+	}
+}
+
+func lookupTLS(domain string) {
+	conf := &tls.Config{
+		InsecureSkipVerify: true,
+	}
+
+	conn, err := tls.Dial("tcp", domain+":443", conf)
+	if err != nil {
+		log.Println("Error in Dial", err)
+		return
+	}
+	defer conn.Close()
+	certs := conn.ConnectionState().PeerCertificates
+	if len(certs) > 0 {
+		fmt.Println("Certificate(s)")
+	}
+	for _, cert := range certs {
+		fmt.Printf("Issuer Name: %s\n", cert.Issuer)
+		fmt.Printf("Expiry: %s \n", cert.NotAfter.Format("2006-January-02"))
+		fmt.Printf("Common Name: %s \n", cert.Issuer.CommonName)
+		fmt.Printf("Version: %s \n", strconv.Itoa(cert.Version))
+
+		for _, email := range cert.EmailAddresses {
+			fmt.Println("\tAssociated Email Address: " + email)
+		}
+		for _, name := range cert.DNSNames {
+			fmt.Println("   " + name)
+		}
+		fmt.Println()
 	}
 }
