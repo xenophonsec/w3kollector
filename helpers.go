@@ -15,15 +15,15 @@ func saveLineToFile(filename string, content string) {
 		filePath := filepath.Join(outputDir, filename)
 		f, err := os.OpenFile(filePath, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
 		if err != nil {
-			fmt.Println("Failed to write to file", filename)
+			fmt.Println("Failed to open to file", filePath)
 		} else {
 			_, err := f.WriteString(content + "\n")
 			if err != nil {
-				fmt.Println("Failed to write to file", filename)
+				fmt.Println("Failed to write to file", filePath)
 			}
 		}
 		if err := f.Close(); err != nil {
-			log.Fatal("error", err)
+			log.Fatal("Failed to close file: "+filePath, err)
 		}
 	}
 }
@@ -67,8 +67,9 @@ func handleOutputPath(outputFlag string, targetDomain string) {
 
 // extract domain target domain from url
 func urlToDomain(url string) string {
-	targetDomain := strings.Replace(url, "https://", "", -1)
-	targetDomain = strings.Replace(targetDomain, "http://", "", -1)
+	url = strings.Replace(url, "https://", "", -1)
+	url = strings.Replace(url, "http://", "", -1)
+	targetDomain := url[0:strings.Index(url, "/")]
 	return targetDomain
 }
 
