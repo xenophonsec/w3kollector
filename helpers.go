@@ -48,7 +48,6 @@ func handleOutputPath(outputFlag string, targetDomain string) {
 			outputDir = filepath.Join(outputDir, targetDomain)
 			_, err = os.Stat(outputDir)
 			if os.IsNotExist(err) {
-				color.Red(outputDir + " does not exist")
 				os.Mkdir(outputDir, os.FileMode(0644))
 			} else if err != nil {
 				panic(err)
