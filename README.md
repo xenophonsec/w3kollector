@@ -210,6 +210,7 @@ USAGE:
 OPTIONS:
    --all, -a                                      Scrape everything     
    --emails, -e                                   Scrape email addresses
+   --addresses, --ad                              Scrape addresses
    --phones, -p                                   Scrape phone numbers
    --scripts, -s                                  Scrape scripts
    --stylesheets, --ss                            Scrape stylesheets
@@ -232,6 +233,7 @@ w3kollector scrape site --all microsoft.com
 It collects
 - Email Addresses
 - Phone Numbers
+- Mail addresses
 - PDFs
 - Downloadable files
 - Outbound Links
@@ -265,6 +267,7 @@ Output structure:
   - metaTags.txt
   - search.txt
   - serverEngines.txt
+  - addresses.txt
 
 > **Note:** files and folders are only created if that data is found
 
