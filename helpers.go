@@ -68,8 +68,11 @@ func handleOutputPath(outputFlag string, targetDomain string) {
 // extract domain target domain from url
 func urlToDomain(url string) string {
 	url = strings.Replace(url, "https://", "", -1)
-	url = strings.Replace(url, "http://", "", -1)
-	targetDomain := url[0:strings.Index(url, "/")]
+	targetDomain := strings.Replace(url, "http://", "", -1)
+	slashIndex := strings.Index(targetDomain, "/")
+	if slashIndex != -1 {
+		targetDomain = targetDomain[0:slashIndex]
+	}
 	return targetDomain
 }
 
