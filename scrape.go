@@ -69,7 +69,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 			} else {
 				// handle pdfs
 				if strings.HasSuffix(url, ".pdf") {
-					if !arrayContains(pdfs, url) {
+					if cl.Bool("logpdfs") && !arrayContains(pdfs, url) {
 						pdfs = append(pdfs, url)
 						color.Blue("PDF: " + url)
 						saveLineToFile("pdfs.txt", url)
