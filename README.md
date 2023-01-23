@@ -194,13 +194,15 @@ w3kollector scrape site --all http://website.com
 ## Search
 
 ### Search text
+You can search a website for specific text using the text flag (or -t).
 ```
-w3kollector search site --text="login" microsoft.com
+w3kollector search site --text="api" microsoft.com
 ```
-
+> **Note:** the search command will search html and javascript files alike.
 
 ### Search multiple keywords
+You can search multiple keywords or phrases at the same time with the keywords flag (or -k).
 ```
-w3kollector search site --keywords="login,signin,logout,signout" microsoft.com
+w3kollector search site --keywords="login,log in,logout" microsoft.com
 ```
 

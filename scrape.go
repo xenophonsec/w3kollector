@@ -153,7 +153,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 		url := r.Request.URL.String()
 		page := r.Request.URL.Path
 		// save response meta data
-		responseLine := strconv.Itoa(r.StatusCode) + " " + r.Headers.Get("Content-Type") + " " + url
+		responseLine := r.Headers.Get("server") + "\t" + strconv.Itoa(r.StatusCode) + "\t" + r.Headers.Get("Content-Type") + "\t" + url
 		saveLineToFile("responses.txt", responseLine)
 		// Get server engine names
 		if cl.Bool("serverEngine") || cl.Bool("all") {
