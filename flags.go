@@ -54,6 +54,10 @@ var scrapeFlags = []cli.Flag{
 		Value: "",
 		Usage: "What directory to place the output in. Default is current working directory",
 	},
+	cli.BoolFlag{
+		Name:  "serverEngine,se",
+		Usage: "Get server engine names from HTTP headers",
+	},
 }
 
 var searchFlags = []cli.Flag{

@@ -27,9 +27,9 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	var stylesheets []string
 	var links []string
 	var metaData []string
+	var serverEngines []string
 
 	targetURL = handleTargetURL(targetURL)
-
 	targetDomain := urlToDomain(targetURL)
 
 	handleOutputPath(cl.String("out"), targetDomain)
@@ -155,6 +155,15 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 		// save response meta data
 		responseLine := strconv.Itoa(r.StatusCode) + " " + r.Headers.Get("Content-Type") + " " + url
 		saveLineToFile("responses.txt", responseLine)
+		// Get server engine names
+		if cl.Bool("serverEngine") || cl.Bool("all") {
+			engine := r.Headers.Get("server")
+			if len(engine) > 0 && !arrayContains(serverEngines, engine) {
+				serverEngines = append(serverEngines, engine)
+				color.Yellow("Server Engine: " + engine)
+				saveLineToFile("ServerEngines.txt", engine)
+			}
+		}
 		// download pdfs
 		if strings.HasSuffix(page, ".pdf") {
 			if !dontsave {
