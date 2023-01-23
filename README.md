@@ -109,24 +109,25 @@ w3kollector scrape site --help
 =================================================
 
 NAME:
-   w3kollector scrape site - site the website
+   w3kollector scrape site - crawl the website and scrape it
 
 USAGE:
    w3kollector scrape site [command options] [arguments...]
 
 OPTIONS:
-   --all, -a                     Scrape everything
-   --emails, -e                  Scrape email addresses
-   --phones, -p                  Scrape phone numbers
-   --scripts, -s                 Scrape scripts
-   --stylesheets, --ss           Scrape stylesheets
-   --resourcelinks, --rl         Scrape resource links
-   --downloadpdfs, --dp          Download pdfs
-   --files                       Download all downloadable files
-   --logpdfs, --lp               Log pdf urls
-   --meta, -m                    Scrape meta tags
-   --search value, --find value  Search html pages. This can be plain text or html you are looking for.
-   --out value, -o value         What directory to place the output in. Default is current working directory.
+   --all, -a                                      Scrape everything     
+   --emails, -e                                   Scrape email addresses
+   --phones, -p                                   Scrape phone numbers
+   --scripts, -s                                  Scrape scripts
+   --stylesheets, --ss                            Scrape stylesheets
+   --resourcelinks, --rl                          Scrape resource links
+   --downloadpdfs, --dp                           Download pdfs
+   --files                                        Download all downloadable files
+   --logpdfs, --lp                                Log pdf urls
+   --meta, -m                                     Scrape meta tags
+   --search value, --find value, --lookfor value  Search html pages. This can be plain text or html you are looking for
+   --out value, -o value                          What directory to place the output in. Default is current working directory
+   --serverEngine, --se                           Get server engine names from HTTP headers
 ```
 
 
@@ -145,6 +146,7 @@ It collects
 - Stylesheets
 - Resource Links (dns-prefetch, preconnect, canonical, alternate etc...)
 - Meta data from meta tags
+- Server Engine Types
 
 It also
 - builds a sitemap of pages visited
@@ -169,6 +171,7 @@ Output structure:
   - resourceLinks.txt
   - metaTags.txt
   - search.txt
+  - serverEngines.txt
 
 > **Note:** files and folders are only created if that data is found
 
