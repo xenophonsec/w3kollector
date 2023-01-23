@@ -84,7 +84,6 @@ func lookupHTTP(domain string) {
 			fmt.Println("Powered By: ", poweredBy)
 		}
 		fmt.Println()
-		fmt.Println("Interesting Headers")
 		for key := range res.Header {
 			if (strings.HasPrefix(key, "X-") || strings.HasPrefix(key, "x-")) && key != "X-Powered-By" {
 				fmt.Println(key+": ", res.Header.Get(key))
