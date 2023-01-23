@@ -11,6 +11,7 @@ import (
 )
 
 var searches []string
+var scripts []string
 
 func searchSite(cl *cli.Context, targetURL string, crawl bool) {
 	collector := colly.NewCollector(
@@ -39,6 +40,13 @@ func searchSite(cl *cli.Context, targetURL string, crawl bool) {
 			}
 		})
 	}
+	collector.OnHTML("script", func(e *colly.HTMLElement) {
+		url := e.Attr("src")
+		if len(url) > 1 && !arrayContains(scripts, url) {
+			scripts = append(scripts, url)
+			e.Request.Visit(url)
+		}
+	})
 	collector.OnRequest(func(r *colly.Request) {
 		// log url
 		fmt.Println("Searching: ", r.URL)
