@@ -11,6 +11,7 @@ import (
 )
 
 func lookupDomain(domain string) {
+	handleOutputPath("", domain)
 	fmt.Println()
 	lookupCNAME(domain)
 	lookupHTTP(domain)
@@ -33,6 +34,7 @@ func lookupDNSTXT(domain string) {
 	}
 	for _, record := range records {
 		fmt.Println("DNS TXT Record: ", record)
+		saveLineToFile("dnsTxtRecords.txt", record)
 	}
 }
 
@@ -42,6 +44,7 @@ func lookupCNAME(domain string) {
 		log.Fatal(err)
 	}
 	fmt.Println("CNAME Record: ", cname)
+	saveLineToFile("domainProfile.txt", "CNAME Record: "+cname)
 }
 
 func getIPs(domain string) {
@@ -51,6 +54,7 @@ func getIPs(domain string) {
 	}
 	for _, ip := range ips {
 		fmt.Println("IP address: ", ip)
+		saveLineToFile("ipAddresses.txt", ip)
 	}
 }
 
@@ -61,6 +65,7 @@ func lookupNS(domain string) {
 	}
 	for _, record := range records {
 		fmt.Println("Name Server: ", record.Host)
+		saveLineToFile("nameServers.txt", record.Host)
 	}
 }
 
@@ -71,6 +76,7 @@ func lookupMX(domain string) {
 	}
 	for _, mx := range mxs {
 		fmt.Println("MX Record: ", mx.Host)
+		saveLineToFile("mxRecords.txt", mx.Host)
 	}
 }
 
@@ -83,14 +89,18 @@ func lookupHTTP(domain string) {
 		fmt.Println("Protocol:\t" + res.Proto)
 		if len(serverHeader) > 0 {
 			fmt.Println("Server Engine: ", serverHeader)
+			saveLineToFile("domainProfile.txt", "Server Engine: "+serverHeader)
 		}
 		if len(poweredBy) > 0 {
 			fmt.Println("Powered By: ", poweredBy)
+			saveLineToFile("domainProfile.txt", "Powered By: "+poweredBy)
 		}
 		fmt.Println()
+		saveLineToFile("domainProfile.txt", "Interesting Headers:")
 		for key := range res.Header {
 			if (strings.HasPrefix(key, "X-") || strings.HasPrefix(key, "x-")) && key != "X-Powered-By" {
 				fmt.Println(key+": ", res.Header.Get(key))
+				saveLineToFile("domainProfile.txt", key+": "+res.Header.Get(key))
 			}
 		}
 	}
@@ -119,9 +129,11 @@ func lookupTLS(domain string) {
 
 		for _, email := range cert.EmailAddresses {
 			fmt.Println("\tAssociated Email Address: " + email)
+			saveLineToFile("domainProfile.txt", "Associated Email Address: "+email)
 		}
 		for _, name := range cert.DNSNames {
 			fmt.Println("   " + name)
+			saveLineToFile("certDomains.txt", name)
 		}
 		fmt.Println()
 	}
