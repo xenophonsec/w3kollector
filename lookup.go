@@ -114,8 +114,8 @@ func lookupTLS(domain string) {
 	for _, cert := range certs {
 		fmt.Printf("Issuer Name: %s\n", cert.Issuer)
 		fmt.Printf("Expiry: %s \n", cert.NotAfter.Format("2006-January-02"))
-		fmt.Printf("Common Name: %s \n", cert.Issuer.CommonName)
 		fmt.Printf("Version: %s \n", strconv.Itoa(cert.Version))
+		fmt.Printf("Common Name: %s \n", cert.Issuer.CommonName)
 
 		for _, email := range cert.EmailAddresses {
 			fmt.Println("\tAssociated Email Address: " + email)
