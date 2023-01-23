@@ -253,7 +253,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 						saveLineToFile("phoneNumbers.txt", phonenumber)
 					}
 				}
-				reg = regexp.MustCompile(`\([0-9]{3}\) [0-9]{3}-[0-9]{4}`)
+				reg = regexp.MustCompile(`\([0-9]{3}\)\s{0,1}[0-9]{3}-[0-9]{4}`)
 				matches = reg.FindAllString(content, -1)
 				for _, phonenumber := range matches {
 					if !arrayContains(phoneNumbers, phonenumber) {
