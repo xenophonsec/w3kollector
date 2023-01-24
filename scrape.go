@@ -27,18 +27,12 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	var stylesheets []string
 	var links []string
 	var metaData []string
+	var serverEngines []string
+	var addresses []string
 
-	if !strings.HasPrefix(targetURL, "http") {
-		targetURL = "https://" + targetURL
-	}
+	targetURL = handleTargetURL(targetURL)
+	targetDomain := urlToDomain(targetURL)
 
-	// set and clean target domain
-	targetDomain := strings.Replace(targetURL, "https://", "", -1)
-	targetDomain = strings.Replace(targetDomain, "http://", "", -1)
-
-	if len(cl.String("out")) == 0 {
-		fmt.Println("out not set")
-	}
 	handleOutputPath(cl.String("out"), targetDomain)
 	// for every link
 	collector.OnHTML("a", func(e *colly.HTMLElement) {
@@ -76,7 +70,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 			} else {
 				// handle pdfs
 				if strings.HasSuffix(url, ".pdf") {
-					if !arrayContains(pdfs, url) {
+					if cl.Bool("logpdfs") && !arrayContains(pdfs, url) {
 						pdfs = append(pdfs, url)
 						color.Blue("PDF: " + url)
 						saveLineToFile("pdfs.txt", url)
@@ -160,39 +154,57 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 		url := r.Request.URL.String()
 		page := r.Request.URL.Path
 		// save response meta data
-		responseLine := strconv.Itoa(r.StatusCode) + " " + r.Headers.Get("Content-Type") + " " + url
+		responseLine := r.Headers.Get("server") + "\t" +
+			r.Headers.Get("via") + "\t" +
+			strconv.Itoa(r.StatusCode) + "\t" +
+			r.Headers.Get("Content-Type") + "\t" +
+			url
+
 		saveLineToFile("responses.txt", responseLine)
+		// Get server engine names
+		if cl.Bool("serverEngine") || cl.Bool("all") {
+			engine := r.Headers.Get("server")
+			if len(engine) > 0 && !arrayContains(serverEngines, engine) {
+				serverEngines = append(serverEngines, engine)
+				color.Yellow("Server Engine: " + engine)
+				saveLineToFile("ServerEngines.txt", engine)
+			}
+		}
 		// download pdfs
 		if strings.HasSuffix(page, ".pdf") {
-			if cl.Bool("downloadpdfs") || cl.Bool("all") {
-				pdfsDir := filepath.Join(outputDir, "pdfs")
-				_, err := os.Stat(pdfsDir)
-				if os.IsNotExist(err) {
-					os.Mkdir(pdfsDir, os.FileMode(0644))
-				}
-				pdfFilePath := filepath.Join(pdfsDir, r.FileName())
-				_, err = os.Stat(pdfFilePath)
-				if os.IsNotExist(err) {
-					err = r.Save(pdfFilePath)
-					if err != nil {
-						panic(err)
+			if !dontsave {
+				if cl.Bool("downloadpdfs") || cl.Bool("all") {
+					pdfsDir := filepath.Join(outputDir, "pdfs")
+					_, err := os.Stat(pdfsDir)
+					if os.IsNotExist(err) {
+						os.Mkdir(pdfsDir, os.FileMode(0644))
+					}
+					pdfFilePath := filepath.Join(pdfsDir, r.FileName())
+					_, err = os.Stat(pdfFilePath)
+					if os.IsNotExist(err) {
+						err = r.Save(pdfFilePath)
+						if err != nil {
+							panic(err)
+						}
 					}
 				}
 			}
 			// download files that aren't html pages
 		} else if !strings.Contains(r.Headers.Get("Content-Type"), "html") {
-			if cl.Bool("downloadpdfs") || cl.Bool("all") {
-				filesDir := filepath.Join(outputDir, "files")
-				_, err := os.Stat(filesDir)
-				if os.IsNotExist(err) {
-					os.Mkdir(filesDir, os.FileMode(0644))
-				}
-				filePath := filepath.Join(filesDir, r.FileName())
-				_, err = os.Stat(filePath)
-				if os.IsNotExist(err) {
-					err = r.Save(filePath)
-					if err != nil {
-						panic(err)
+			if !dontsave {
+				if cl.Bool("downloadpdfs") || cl.Bool("all") {
+					filesDir := filepath.Join(outputDir, "files")
+					_, err := os.Stat(filesDir)
+					if os.IsNotExist(err) {
+						os.Mkdir(filesDir, os.FileMode(0644))
+					}
+					filePath := filepath.Join(filesDir, r.FileName())
+					_, err = os.Stat(filePath)
+					if os.IsNotExist(err) {
+						err = r.Save(filePath)
+						if err != nil {
+							panic(err)
+						}
 					}
 				}
 			}
@@ -204,15 +216,34 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				pages = append(pages, page)
 				saveLineToFile("sitemap.txt", page)
 			}
+			// handle search
 			search := cl.String("search")
 			if search != "" {
-				if strings.Contains(content, search) {
-					color.Green(search + " Found: " + url)
-					saveLineToFile("search.txt", cl.String("search")+" : "+url)
+				occurences := strings.Count(content, search)
+				if occurences >= 1 {
+					output := search + " found " + strconv.Itoa(occurences) + " times at: " + url
+					color.Green(output)
+					saveLineToFile("search.txt", output)
 				}
 			}
+			// scrape addresses
+			if cl.Bool("addresses") || cl.Bool("all") {
+				tags := regexp.MustCompile(`<[^>]*>`)
+				contentStripped := tags.ReplaceAllString(content, " ")
+				// I want multiple more specific matching patterns because addresses can be so vague you can easily grab something that isn't one
+				// match P.O. Box addresses
+				// P.O. Box 3000 Cityname, CA 12345
+				findAddresses(contentStripped, `(P\.O\.\sBox\s)\d+\s[\w+\s]+[,]?\s\w+\s\w+`, &addresses)
+				// standard US home address
+				// 889 easy street rd, happyville Virginia 22642
+				findAddresses(contentStripped, `\d+\s+[\w+\s]+\s[crdstav]{2}[,]?\s\w+\s\w+\s\d{3,5}`, &addresses)
+				// suites and apt
+				//260 Deanna Views, Suite 480, Robynberg, Montana, 56479
+				//260 Deanna Views, Apt. 480, Robynberg, Montana, 56479
+				findAddresses(contentStripped, `\d+\s+[\w+\s]+[,]?\s+(Apt\.|Suite)\s\d+[,]?\s+\w+[,]?\s+\w+[,]?\s+\d+`, &addresses)
+			}
 			// scrape phone numbers
-			if cl.Bool("phone") || cl.Bool("all") {
+			if cl.Bool("phones") || cl.Bool("all") {
 				reg := regexp.MustCompile(`[0-9]{3}-[0-9]{3}-[0-9]{4}`)
 				matches := reg.FindAllString(content, -1)
 				for _, phonenumber := range matches {
@@ -222,7 +253,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 						saveLineToFile("phoneNumbers.txt", phonenumber)
 					}
 				}
-				reg = regexp.MustCompile(`\([0-9]{3}\) [0-9]{3}-[0-9]{4}`)
+				reg = regexp.MustCompile(`\([0-9]{3}\)\s{0,1}[0-9]{3}-[0-9]{4}`)
 				matches = reg.FindAllString(content, -1)
 				for _, phonenumber := range matches {
 					if !arrayContains(phoneNumbers, phonenumber) {
@@ -236,4 +267,19 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	})
 
 	collector.Visit(targetURL)
+}
+
+func findAddresses(text string, regex string, addresses *[]string) {
+	reg := regexp.MustCompile(regex)
+	matches := reg.FindAllString(text, -1)
+	for _, address := range matches {
+		// clean address whitespace
+		spaces := regexp.MustCompile(`\s+`)
+		address = spaces.ReplaceAllString(address, " ")
+		if !arrayContains(*addresses, address) {
+			*addresses = append(*addresses, address)
+			color.Cyan("Address: " + address)
+			saveLineToFile("addresses.txt", address)
+		}
+	}
 }

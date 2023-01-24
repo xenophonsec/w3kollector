@@ -1,6 +1,8 @@
 package main
 
-import "github.com/urfave/cli"
+import (
+	"github.com/urfave/cli"
+)
 
 var scrapeFlags = []cli.Flag{
 	cli.BoolFlag{
@@ -14,6 +16,10 @@ var scrapeFlags = []cli.Flag{
 	cli.BoolFlag{
 		Name:  "phones,p",
 		Usage: "Scrape phone numbers",
+	},
+	cli.BoolFlag{
+		Name:  "addresses,ad",
+		Usage: "Scrape addresses",
 	},
 	cli.BoolFlag{
 		Name:  "scripts,s",
@@ -32,7 +38,7 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Download pdfs",
 	},
 	cli.BoolFlag{
-		Name:  "files",
+		Name:  "files,f",
 		Usage: "Download all downloadable files",
 	},
 	cli.BoolFlag{
@@ -44,12 +50,29 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Scrape meta tags",
 	},
 	cli.StringFlag{
-		Name:  "search,find",
-		Usage: "Search html pages. This can be plain text or html you are looking for.",
+		Name:  "search,find,lookfor",
+		Usage: "Search html pages. This can be plain text or html you are looking for",
 	},
 	cli.StringFlag{
 		Name:  "out,o",
 		Value: "",
-		Usage: "What directory to place the output in. Default is current working directory.",
+		Usage: "What directory to place the output in. Default is current working directory",
+	},
+	cli.BoolFlag{
+		Name:  "serverEngine,se",
+		Usage: "Get server engine names from HTTP headers",
+	},
+}
+
+var searchFlags = []cli.Flag{
+	cli.StringFlag{
+		Name:  "text,t",
+		Value: "",
+		Usage: "text to search website for",
+	},
+	cli.StringFlag{
+		Name:  "keywords,k",
+		Value: "",
+		Usage: "keywords seperated by commas",
 	},
 }
