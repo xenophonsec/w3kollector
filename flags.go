@@ -26,6 +26,10 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Scrape scripts",
 	},
 	cli.BoolFlag{
+		Name:  "images,",
+		Usage: "Scrape images",
+	},
+	cli.BoolFlag{
 		Name:  "stylesheets,ss",
 		Usage: "Scrape stylesheets",
 	},
