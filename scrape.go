@@ -291,7 +291,7 @@ func findAddresses(text string, regex string, addresses *[]string) {
 		address = spaces.ReplaceAllString(address, " ")
 		if !arrayContains(*addresses, address) {
 			*addresses = append(*addresses, address)
-			color.Cyan("Address: " + address)
+			color.Cyan("Possible Mailing Address: " + address)
 			saveLineToFile("addresses.txt", address)
 		}
 	}
