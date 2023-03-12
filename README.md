@@ -105,6 +105,7 @@ OPTIONS:
    --addresses, --ad                              Scrape addresses
    --phones, -p                                   Scrape phone numbers
    --scripts, -s                                  Scrape scripts
+   --images, -i                                   Scrape images
    --stylesheets, --ss                            Scrape stylesheets
    --resourcelinks, --rl                          Scrape resource links
    --downloadpdfs, --dp                           Download pdfs
@@ -127,6 +128,7 @@ It collects
 - Phone Numbers
 - Mail addresses
 - PDFs
+- Images
 - Downloadable files
 - Outbound Links
 - Scripts
@@ -148,12 +150,14 @@ Output structure:
     - setup.exe
   - pdfs
     - gettingstarted.pdf
+    - logo.pngs
   - outbound.txt
   - sitemap.txt
   - responses.txt
   - emailAddresses.txt
   - phoneNumbers.txt
   - scripts.txt
+  - images.txt
   - stylesheets.txt
   - resourceLinks.txt
   - metaTags.txt

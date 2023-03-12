@@ -29,6 +29,7 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 	var metaData []string
 	var serverEngines []string
 	var addresses []string
+	var images []string
 
 	targetURL = handleTargetURL(targetURL)
 	targetDomain := urlToDomain(targetURL)
@@ -98,6 +99,18 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				scripts = append(scripts, url)
 				fmt.Println("Script: ", url)
 				saveLineToFile("scripts.txt", url)
+			}
+		}
+	})
+
+	collector.OnHTML("img", func(e *colly.HTMLElement) {
+		if cl.Bool("images") || cl.Bool("all") {
+			url := e.Attr("src")
+			if len(url) > 1 && !arrayContains(images, url) {
+				images = append(images, url)
+				fmt.Println("Image: ", url)
+				saveLineToFile("images.txt", url)
+				e.Request.Visit(url)
 			}
 		}
 	})
@@ -278,7 +291,7 @@ func findAddresses(text string, regex string, addresses *[]string) {
 		address = spaces.ReplaceAllString(address, " ")
 		if !arrayContains(*addresses, address) {
 			*addresses = append(*addresses, address)
-			color.Cyan("Address: " + address)
+			color.Cyan("Possible Mailing Address: " + address)
 			saveLineToFile("addresses.txt", address)
 		}
 	}
