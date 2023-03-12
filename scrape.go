@@ -250,6 +250,9 @@ func scrape(cl *cli.Context, targetURL string, crawl bool) {
 				// standard US home address
 				// 889 easy street rd, happyville Virginia 22642
 				findAddresses(contentStripped, `\d+\s+[\w+\s]+\s[crdstav]{2}[,]?\s\w+\s\w+\s\d{3,5}`, &addresses)
+				// building floors
+				// 200 Broadway 4th Floor New York, NY 10003
+				findAddresses(contentStripped, `\d+\s+[\w+\s]+floor[,]?\s\w+\s\w+[,]?\s\w+\s\d{3,5}`, &addresses)
 				// suites and apt
 				//260 Deanna Views, Suite 480, Robynberg, Montana, 56479
 				//260 Deanna Views, Apt. 480, Robynberg, Montana, 56479
