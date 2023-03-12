@@ -26,7 +26,7 @@ var scrapeFlags = []cli.Flag{
 		Usage: "Scrape scripts",
 	},
 	cli.BoolFlag{
-		Name:  "images,",
+		Name:  "images,i",
 		Usage: "Scrape images",
 	},
 	cli.BoolFlag{
